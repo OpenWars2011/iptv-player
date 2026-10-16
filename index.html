@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IPTV Player für Windows</title>
+<meta name="description" content="IPTV Player für Windows: über 24.000 frei verfügbare Sender, TV-Programm, Live-Ergebnisse und Sport-News. Kostenlos.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect x=%221%22 y=%221%22 width=%2230%22 height=%2230%22 rx=%227%22 fill=%22%235b8cff%22/%3E%3Crect x=%226%22 y=%228%22 width=%2220%22 height=%2214%22 rx=%221.5%22 fill=%22%23fff%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: Sendestudio bei Nacht – links das Versprechen + Download, rechts ein Bildschirm mit Sender-Einblendung;
+   darunter ein Testbild-Farbstreifen als Trenner, dann Funktionen, Installation in echten Schritten, Hinweise. */
+:root{
+  --bg:#0c1220; --panel:#131b2d; --panel2:#1a2440; --line:#26314d;
+  --fg:#e8ecf5; --mute:#94a0ba; --accent:#5b8cff; --live:#ff4b5c; --ok:#3fcf8e;
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#f3f5fa; --panel:#ffffff; --panel2:#eaeef7; --line:#d5dbe8;
+  --fg:#121a2b; --mute:#55617a; --accent:#2f5fe0; --live:#d92c40; --ok:#13965f; color-scheme:light } }
+:root[data-theme="light"]{
+  --bg:#f3f5fa; --panel:#ffffff; --panel2:#eaeef7; --line:#d5dbe8;
+  --fg:#121a2b; --mute:#55617a; --accent:#2f5fe0; --live:#d92c40; --ok:#13965f; color-scheme:light }
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--f-body)}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* Kopf */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:20px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:.02em;text-transform:uppercase}
+.brand svg{width:30px;height:30px}
+.ver{font-family:var(--f-mono);font-size:13px;color:var(--mute)}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding-block:28px 52px}
+.hero > *{min-width:0}
+.kicker{font-family:var(--f-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:8px}
+.tally{width:9px;height:9px;border-radius:50%;background:var(--live);box-shadow:0 0 0 4px color-mix(in srgb,var(--live) 22%,transparent)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,7vw,78px);line-height:.95;letter-spacing:.005em;text-transform:uppercase;margin:14px 0 18px;text-wrap:balance}
+.lead{font-size:18px;color:var(--mute);max-width:52ch;margin:0 0 28px}
+.dl{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.btn{text-decoration:none;font:600 17px var(--f-body);border:0;border-radius:12px;padding:15px 24px;background:var(--accent);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn svg{width:20px;height:20px}
+.meta{font-family:var(--f-mono);font-size:13px;color:var(--mute);line-height:1.5}
+.msg{margin-top:14px;font-size:14px;min-height:1.4em}
+.msg.ok{color:var(--ok)} .msg.err{color:var(--live)}
+
+/* Bildschirm mit Sender-Einblendung */
+.tv{position:relative;aspect-ratio:16/10;max-width:100%;border-radius:18px;background:#05070d;border:10px solid #1b2236;box-shadow:0 30px 60px -30px rgba(0,0,0,.6);overflow:hidden}
+.tv .bars{position:absolute;inset:0;display:grid;grid-template-columns:repeat(7,1fr)}
+.tv .bars i{display:block}
+.tv .osd{position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(8,12,22,.82);color:#e8ecf5;backdrop-filter:blur(4px)}
+.tv .ch{font-family:var(--f-display);font-weight:800;font-size:34px;line-height:1;color:#fff;min-width:64px}
+.tv .info{min-width:0;flex:1}
+.tv .info b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv .info span{display:block;font-family:var(--f-mono);font-size:12px;color:#aab4cc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv .bar{height:4px;border-radius:2px;background:#2a3350;margin-top:7px;overflow:hidden}
+.tv .bar i{display:block;height:100%;width:62%;background:#5b8cff}
+.tv .live{position:absolute;top:14px;right:14px;font:600 12px var(--f-mono);letter-spacing:.1em;color:#fff;background:#ff4b5c;padding:4px 9px;border-radius:6px}
+@media (prefers-reduced-motion: no-preference){ .tv .live{animation:blink 1.6s ease-in-out infinite} @keyframes blink{50%{opacity:.55}} }
+
+/* Testbild-Streifen */
+.strip{height:8px;display:grid;grid-template-columns:repeat(7,1fr)}
+
+/* Abschnitte */
+section{padding-block:56px}
+h2{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,4vw,42px);text-transform:uppercase;letter-spacing:.01em;margin:0 0 8px;text-wrap:balance}
+.sub{color:var(--mute);margin:0 0 30px;max-width:62ch}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.feat div{background:var(--panel);padding:22px 22px 24px;min-width:0}
+.feat b{display:block;font-size:17px;margin-bottom:4px}
+.feat p{margin:0;color:var(--mute);font-size:15px}
+.feat .n{font-family:var(--f-display);font-weight:800;font-size:34px;line-height:1;color:var(--accent);display:block;margin-bottom:8px;font-variant-numeric:tabular-nums}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:14px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;counter-increment:s}
+.steps li::before{content:counter(s);font-family:var(--f-display);font-weight:800;font-size:40px;line-height:1;color:var(--accent);text-align:center}
+.steps li > div{min-width:0}
+.steps b{display:block;font-size:17px}
+.steps p{margin:4px 0 0;color:var(--mute);font-size:15px}
+code{font-family:var(--f-mono);font-size:.92em;background:var(--panel2);padding:1px 6px;border-radius:5px}
+
+.req{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.req > div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;min-width:0}
+.req h3{margin:0 0 10px;font-size:13px;font-family:var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:500}
+.req dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:15px}
+.req dt{color:var(--mute)}
+.req dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.hash{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hash code{word-break:break-all;font-size:12px}
+.copy{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:8px;padding:4px 10px;cursor:pointer}
+
+.note{border:1px solid var(--line);border-left:4px solid var(--live);background:var(--panel);border-radius:12px;padding:18px 22px;color:var(--mute);font-size:15px}
+.note b{color:var(--fg)}
+.note ul{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
+footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px solid var(--line)}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;gap:30px}
+  .feat{grid-template-columns:1fr 1fr}
+  .req{grid-template-columns:1fr}
+}
+@media (max-width:520px){ .feat{grid-template-columns:1fr} .steps li{grid-template-columns:40px 1fr;gap:12px} .steps li::before{font-size:32px} }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="7" fill="var(--accent)"/><rect x="6" y="8" width="20" height="14" rx="1.5" fill="#fff"/><rect x="12" y="23.5" width="8" height="2" fill="#fff"/><path d="M13.5 11.5v7l6-3.5z" fill="var(--accent)"/></svg>
+      IPTV Player
+    </div>
+    <span class="ver">Version 1.0 · 16.10.2026</span>
+  </header>
+
+  <div class="hero">
+    <div>
+      <div class="kicker"><span class="tally" aria-hidden="true"></span>Für Windows 10 und 11 · gratis</div>
+      <h1>Freies Fernsehen aus aller Welt.</h1>
+      <p class="lead">Über 24.000 frei verfügbare Sender und Radios, sortiert nach Land, Sprache und Art. Mit TV-Programm, Live-Ergebnissen aus 15 Sportarten und Sport-News. Läuft auf deinem eigenen PC.</p>
+      <div class="dl">
+        <a class="btn" id="dlBtn" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          ZIP herunterladen
+        </a>
+        <div class="meta">IPTV-Player.zip<br>94 KB · Windows</div>
+      </div>
+      <div class="msg" id="dlMsg" role="status"></div>
+    </div>
+
+    <div class="tv" aria-label="Beispiel: Sender-Einblendung im Player">
+      <div class="bars" aria-hidden="true"><i style="background:#c0c0c0"></i><i style="background:#c0c000"></i><i style="background:#00c0c0"></i><i style="background:#00c000"></i><i style="background:#c000c0"></i><i style="background:#c00000"></i><i style="background:#0000c0"></i></div>
+      <span class="live">LIVE</span>
+      <div class="osd">
+        <span class="ch">001</span>
+        <div class="info">
+          <b>Das Erste</b>
+          <span>JETZT 20:15 · Tagesschau · danach Tatort</span>
+          <div class="bar"><i></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="strip" aria-hidden="true"><i style="background:#c0c0c0"></i><i style="background:#c0c000"></i><i style="background:#00c0c0"></i><i style="background:#00c000"></i><i style="background:#c000c0"></i><i style="background:#c00000"></i><i style="background:#0000c0"></i></div>
+
+<div class="wrap">
+  <section>
+    <h2>Was drin ist</h2>
+    <p class="sub">Alles läuft lokal auf deinem Rechner. Die Senderlisten kommen aus öffentlichen Sammlungen wie Free-TV und iptv-org sowie von Gratisdiensten wie Pluto TV und Samsung TV Plus.</p>
+    <div class="feat">
+      <div><span class="n">24.000+</span><b>Sender und Radios</b><p>Filter nach Land, Sprache und Art, dazu Suche, Favoriten und ein Sender-Check, der zeigt, was gerade läuft.</p></div>
+      <div><span class="n">EPG</span><b>TV-Programm</b><p>Was jetzt läuft und was danach kommt, für tausende Sender. Eigene XMLTV-Quellen lassen sich ergänzen.</p></div>
+      <div><span class="n">15</span><b>Sportarten live</b><p>Ergebnisse, Torschützen, Karten und Tabellen. Fussball von der Champions League bis zur Regionalliga, dazu NHL, NBA, Tennis, F1 und Darts.</p></div>
+      <div><span class="n">18</span><b>News-Quellen</b><p>Sport-Schlagzeilen aus der Schweiz, Deutschland, Ungarn und international, mit Suche und Quellenfilter.</p></div>
+      <div><span class="n">WLAN</span><b>Handy und Fernseher</b><p>Per Schalter im Heimnetz freigeben und mit dem QR-Code am Handy öffnen. Am Smart-TV mit Fernbedienung bedienbar.</p></div>
+      <div><span class="n">Login</span><b>Eigene Konten</b><p>Anmeldung mit E-Mail und Passwort. Favoriten und Einstellungen liegen im eigenen Konto.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>So installierst du ihn</h2>
+    <p class="sub">Einmal einrichten dauert etwa drei Minuten.</p>
+    <ol class="steps">
+      <li><div><b>Node.js installieren</b><p>Lade die LTS-Version von <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> und installiere sie mit den Standard-Einstellungen. Der Player braucht Node.js für seinen kleinen Server.</p></div></li>
+      <li><div><b>ZIP entpacken</b><p>Rechtsklick auf <code>IPTV-Player.zip</code> und „Alle extrahieren“. Leg den Ordner an einen festen Ort, zum Beispiel unter Dokumente.</p></div></li>
+      <li><div><b>IPTV Player.exe starten</b><p>Doppelklick auf <code>IPTV Player.exe</code>. Zeigt Windows „Der Computer wurde geschützt“, klick auf „Weitere Informationen“ und dann „Trotzdem ausführen“. Das Programm ist nicht signiert.</p></div></li>
+      <li><div><b>Konto erstellen</b><p>Der Browser öffnet sich mit der Anmeldeseite. Unter „Registrieren“ legst du dein Konto an. Danach findest du das Symbol unten rechts neben der Uhr.</p></div></li>
+      <li><div><b>Optional: Autostart</b><p>Doppelklick auf <code>Autostart einrichten.vbs</code>, dann startet der Player bei jeder Windows-Anmeldung im Hintergrund.</p></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Technische Daten</h2>
+    <p class="sub">Die Prüfsumme zeigt, ob deine Datei unverändert angekommen ist.</p>
+    <div class="req">
+      <div>
+        <h3>Voraussetzungen</h3>
+        <dl>
+          <dt>System</dt><dd>Windows 10 oder 11</dd>
+          <dt>Laufzeit</dt><dd>Node.js 18 oder neuer</dd>
+          <dt>Browser</dt><dd>Chrome, Edge oder Firefox</dd>
+          <dt>Internet</dt><dd>ab 5 Mbit/s für HD</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>Datei</h3>
+        <dl>
+          <dt>Name</dt><dd>IPTV-Player.zip</dd>
+          <dt>Grösse</dt><dd>96.636 Bytes</dd>
+          <dt>Stand</dt><dd>16.10.2026</dd>
+          <dt>SHA-256</dt><dd><div class="hash"><code id="sha">7d8db5150976cc9d9c62e26d611fe959dedb4f02d5f5a74deca671658a2983a2</code><button class="copy" id="copyBtn" type="button">Kopieren</button></div></dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="note">
+      <b>Wichtig zu wissen</b>
+      <ul>
+        <li>Der Player enthält keine Sendungen. Er spielt nur Streams ab, die die Anbieter frei ins Internet stellen.</li>
+        <li>Manche Sender sind nur in ihrem Land empfangbar oder zeitweise offline. Kopiergeschützte Sender wie SRF 1 öffnen den offiziellen Player.</li>
+        <li>Du bist selbst dafür verantwortlich, die Nutzungsbedingungen der Sender und die Gesetze in deinem Land einzuhalten.</li>
+        <li>Sportdaten stammen aus öffentlichen Schnittstellen (ESPN, OpenLigaDB), News aus den RSS-Feeds der Redaktionen.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">IPTV Player 1.0 · Kostenlos und ohne Werbung · Läuft lokal auf deinem PC</div>
+</footer>
+
+<script>
+// ▼ Hier deinen GitHub-Benutzernamen und den Namen des Repositorys eintragen
+const GITHUB_USER = 'OpenWars2011';
+const GITHUB_REPO = 'iptv-player';
+// ▲ Der Link zeigt immer auf die ZIP-Datei im neuesten Release
+const releaseZip = 'https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO + '/releases/latest/download/IPTV-Player.zip';
+document.getElementById('dlBtn').href = releaseZip;
+document.getElementById('dlBtn').addEventListener('click', () => {
+  const m = document.getElementById('dlMsg');
+  m.textContent = 'Der Download startet. Weiter geht es mit Schritt 1 der Installation.'; m.className = 'msg ok';
+});
+
+document.getElementById('copyBtn').addEventListener('click', e => {
+  const text = document.getElementById('sha').textContent;
+  const done = () => { e.target.textContent = 'Kopiert'; setTimeout(() => e.target.textContent = 'Kopieren', 1500); };
+  try {
+    navigator.clipboard.writeText(text).then(done, () => selectSha());
+  } catch { selectSha(); }
+});
+function selectSha(){ const r = document.createRange(); r.selectNodeContents(document.getElementById('sha')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+</script>
+</body>
+</html>
