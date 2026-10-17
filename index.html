@@ -105,6 +105,18 @@ code{font-family:var(--f-mono);font-size:.92em;background:var(--panel2);padding:
 .hash code{word-break:break-all;font-size:12px}
 .copy{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:8px;padding:4px 10px;cursor:pointer}
 
+.donate{display:grid;grid-template-columns:1fr 150px;gap:28px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px 30px}
+.donate > div{min-width:0}
+.donate .sub{margin-bottom:20px}
+.dbtns{display:flex;flex-wrap:wrap;gap:10px}
+.dbtn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:600 15px var(--f-body);color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+.dbtn:hover{border-color:var(--accent)}
+.dbtn small{font-weight:400;color:var(--mute)}
+.dnote{margin:16px 0 0;font-size:13px;color:var(--mute);max-width:62ch}
+.cup svg{width:100%;max-width:150px;height:auto}
+.thanks{font-size:14px;color:var(--mute);margin:6px 0 0}
+.thanks a{color:var(--accent)}
+@media (max-width:620px){ .donate{grid-template-columns:1fr} .cup{display:none} }
 .note{border:1px solid var(--line);border-left:4px solid var(--live);background:var(--panel);border-radius:12px;padding:18px 22px;color:var(--mute);font-size:15px}
 .note b{color:var(--fg)}
 .note ul{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
@@ -188,6 +200,20 @@ footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px s
     </ol>
   </section>
 
+  <section id="spenden" hidden>
+    <div class="donate">
+      <div>
+        <h2>Gefällt dir der Player?</h2>
+        <p class="sub">Der IPTV Player ist und bleibt kostenlos, ohne Werbung und ohne Abo. Wenn du die Weiterentwicklung unterstützen möchtest, freue ich mich über eine kleine Spende. Das ist freiwillig: Alle Funktionen gibt es auch ohne.</p>
+        <div class="dbtns" id="donateBtns"></div>
+        <p class="dnote">Spenden unterstützen die Arbeit an der Software. Für die Sender und ihre Inhalte zahlst du damit nichts, die stammen von den jeweiligen Anbietern.</p>
+      </div>
+      <div class="cup" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><path d="M28 46h56v30a22 22 0 0 1-22 22h-12a22 22 0 0 1-22-22z" fill="var(--panel2)" stroke="var(--accent)" stroke-width="4"/><path d="M84 54h8a10 10 0 0 1 0 20h-8" fill="none" stroke="var(--accent)" stroke-width="4"/><path d="M46 22c-4 6 4 10 0 16M60 18c-4 6 4 10 0 16M74 22c-4 6 4 10 0 16" fill="none" stroke="var(--mute)" stroke-width="3" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </section>
+
   <section>
     <h2>Technische Daten</h2>
     <p class="sub">Die Prüfsumme zeigt, ob deine Datei unverändert angekommen ist.</p>
@@ -206,9 +232,9 @@ footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px s
         <h3>Datei</h3>
         <dl>
           <dt>Name</dt><dd>IPTV-Player-Setup.exe</dd>
-          <dt>Grösse</dt><dd>34.789.888 Bytes</dd>
+          <dt>Grösse</dt><dd>34.790.400 Bytes</dd>
           <dt>Stand</dt><dd>17.10.2026</dd>
-          <dt>SHA-256</dt><dd><div class="hash"><code id="sha">30a7c0488df5409368afbe73f25951e3e21b2634ad1d5d0a6ff2ab3bce993dae</code><button class="copy" id="copyBtn" type="button">Kopieren</button></div></dd>
+          <dt>SHA-256</dt><dd><div class="hash"><code id="sha">01f5e1e6006f72655db9d41195d4fdd4028c21f641854318047a1153ff18ce30</code><button class="copy" id="copyBtn" type="button">Kopieren</button></div></dd>
         </dl>
       </div>
     </div>
@@ -235,6 +261,15 @@ footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px s
 // ▼ Hier deinen GitHub-Benutzernamen und den Namen des Repositorys eintragen
 const GITHUB_USER = 'OpenWars2011';
 const GITHUB_REPO = 'iptv-player';
+// ▼ Spenden-Links (freiwillig). Leer lassen, was du nicht nutzt – der Bereich erscheint nur,
+//   wenn mindestens ein Link eingetragen ist.
+const DONATE = {
+  whydonate: 'https://whydonate.com/de/fundraising/free-iptv-player',
+  paypal:   '',  // z.B. 'https://paypal.me/DEINNAME'
+  kofi:     '',  // z.B. 'https://ko-fi.com/DEINNAME'
+  bmc:      '',  // z.B. 'https://buymeacoffee.com/DEINNAME'
+  sponsors: '',  // z.B. 'https://github.com/sponsors/DEINNAME'
+};
 // ▲ Der Link zeigt immer auf die ZIP-Datei im neuesten Release
 const rel = 'https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO + '/releases/latest/download/';
 document.getElementById('dlBtn').href = rel + 'IPTV-Player-Setup.exe';
@@ -242,7 +277,29 @@ document.getElementById('zipLink').href = rel + 'IPTV-Player.zip';
 document.getElementById('dlBtn').addEventListener('click', () => {
   const m = document.getElementById('dlMsg');
   m.textContent = 'Der Download startet. Danach die Datei öffnen und „Installieren“ klicken.'; m.className = 'msg ok';
+  if (hasDonate) { const t = document.getElementById('thanks'); if (t) t.hidden = false; }
 });
+
+// Spenden-Bereich nur zeigen, wenn ein Link eingetragen ist
+const DONATE_LABELS = { whydonate: ['Jetzt spenden', 'über WhyDonate'], paypal: ['PayPal', 'einmalig'], kofi: ['Ko-fi', 'Kaffee spendieren'], bmc: ['Buy Me a Coffee', 'Kaffee spendieren'], sponsors: ['GitHub Sponsors', 'monatlich oder einmalig'] };
+const donateLinks = Object.entries(DONATE).filter(([, url]) => /^https:\/\//.test(url));
+const hasDonate = donateLinks.length > 0;
+if (hasDonate) {
+  const box = document.getElementById('donateBtns');
+  for (const [k, url] of donateLinks) {
+    const a = document.createElement('a');
+    a.className = 'dbtn'; a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = '<span></span><small></small>';
+    a.firstChild.textContent = DONATE_LABELS[k][0]; a.lastChild.textContent = DONATE_LABELS[k][1];
+    box.appendChild(a);
+  }
+  document.getElementById('spenden').hidden = false;
+  // dezenter Hinweis unter dem Download-Knopf, erst nach dem Klick
+  const t = document.createElement('p');
+  t.className = 'thanks'; t.id = 'thanks'; t.hidden = true;
+  t.innerHTML = 'Viel Spass! Wenn dir der Player gefällt, kannst du ihn <a href="#spenden">freiwillig unterstützen</a>.';
+  document.getElementById('dlMsg').after(t);
+}
 
 document.getElementById('copyBtn').addEventListener('click', e => {
   const text = document.getElementById('sha').textContent;
