@@ -57,6 +57,7 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(44px,7vw,78px);l
 .btn svg{width:20px;height:20px}
 .meta{font-family:var(--f-mono);font-size:13px;color:var(--mute);line-height:1.5}
 .msg{margin-top:14px;font-size:14px;min-height:1.4em}
+.alt{margin:4px 0 0;font-size:14px;color:var(--mute)}
 .msg.ok{color:var(--ok)} .msg.err{color:var(--live)}
 
 /* Bildschirm mit Sender-Einblendung */
@@ -125,22 +126,23 @@ footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px s
       <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="7" fill="var(--accent)"/><rect x="6" y="8" width="20" height="14" rx="1.5" fill="#fff"/><rect x="12" y="23.5" width="8" height="2" fill="#fff"/><path d="M13.5 11.5v7l6-3.5z" fill="var(--accent)"/></svg>
       IPTV Player
     </div>
-    <span class="ver">Version 1.0 · 16.10.2026</span>
+    <span class="ver">Version 1.0 · 17.10.2026</span>
   </header>
 
   <div class="hero">
     <div>
       <div class="kicker"><span class="tally" aria-hidden="true"></span>Für Windows 10 und 11 · gratis</div>
       <h1>Freies Fernsehen aus aller Welt.</h1>
-      <p class="lead">Über 24.000 frei verfügbare Sender und Radios, sortiert nach Land, Sprache und Art. Mit TV-Programm, Live-Ergebnissen aus 15 Sportarten und Sport-News. Läuft auf deinem eigenen PC.</p>
+      <p class="lead">Über 24.000 frei verfügbare Sender und Radios, sortiert nach Land, Sprache und Art. Mit TV-Programm, Live-Ergebnissen aus 15 Sportarten und Sport-News. Mit einem Klick auf den Fernseher.</p>
       <div class="dl">
         <a class="btn" id="dlBtn" href="#">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-          ZIP herunterladen
+          Jetzt installieren
         </a>
-        <div class="meta">IPTV-Player.zip<br>94 KB · Windows</div>
+        <div class="meta">IPTV-Player-Setup.exe<br>33 MB · Windows 10/11</div>
       </div>
       <div class="msg" id="dlMsg" role="status"></div>
+      <p class="alt">Ohne Installation: <a id="zipLink" href="#">ZIP-Version</a> (110 KB, braucht <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a>)</p>
     </div>
 
     <div class="tv" aria-label="Beispiel: Sender-Einblendung im Player">
@@ -169,20 +171,20 @@ footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px s
       <div><span class="n">EPG</span><b>TV-Programm</b><p>Was jetzt läuft und was danach kommt, für tausende Sender. Eigene XMLTV-Quellen lassen sich ergänzen.</p></div>
       <div><span class="n">15</span><b>Sportarten live</b><p>Ergebnisse, Torschützen, Karten und Tabellen. Fussball von der Champions League bis zur Regionalliga, dazu NHL, NBA, Tennis, F1 und Darts.</p></div>
       <div><span class="n">18</span><b>News-Quellen</b><p>Sport-Schlagzeilen aus der Schweiz, Deutschland, Ungarn und international, mit Suche und Quellenfilter.</p></div>
-      <div><span class="n">WLAN</span><b>Handy und Fernseher</b><p>Per Schalter im Heimnetz freigeben und mit dem QR-Code am Handy öffnen. Am Smart-TV mit Fernbedienung bedienbar.</p></div>
+      <div><span class="n">TV</span><b>Auf den Fernseher senden</b><p>Mit einem Klick auf Chromecast, Google TV oder Smart-TVs mit DLNA (Samsung, LG, Sony, Philips). Am Handy per QR-Code im WLAN.</p></div>
       <div><span class="n">Login</span><b>Eigene Konten</b><p>Anmeldung mit E-Mail und Passwort. Favoriten und Einstellungen liegen im eigenen Konto.</p></div>
     </div>
   </section>
 
   <section>
     <h2>So installierst du ihn</h2>
-    <p class="sub">Einmal einrichten dauert etwa drei Minuten.</p>
+    <p class="sub">Einmal einrichten dauert etwa eine Minute. Deinstallieren geht jederzeit über Einstellungen → Apps.</p>
     <ol class="steps">
-      <li><div><b>Node.js installieren</b><p>Lade die LTS-Version von <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> und installiere sie mit den Standard-Einstellungen. Der Player braucht Node.js für seinen kleinen Server.</p></div></li>
-      <li><div><b>ZIP entpacken</b><p>Rechtsklick auf <code>IPTV-Player.zip</code> und „Alle extrahieren“. Leg den Ordner an einen festen Ort, zum Beispiel unter Dokumente.</p></div></li>
-      <li><div><b>IPTV Player.exe starten</b><p>Doppelklick auf <code>IPTV Player.exe</code>. Zeigt Windows „Der Computer wurde geschützt“, klick auf „Weitere Informationen“ und dann „Trotzdem ausführen“. Das Programm ist nicht signiert.</p></div></li>
-      <li><div><b>Konto erstellen</b><p>Der Browser öffnet sich mit der Anmeldeseite. Unter „Registrieren“ legst du dein Konto an. Danach findest du das Symbol unten rechts neben der Uhr.</p></div></li>
-      <li><div><b>Optional: Autostart</b><p>Doppelklick auf <code>Autostart einrichten.vbs</code>, dann startet der Player bei jeder Windows-Anmeldung im Hintergrund.</p></div></li>
+      <li><div><b>Installer herunterladen</b><p>Klick oben auf „Jetzt installieren“ und speichere <code>IPTV-Player-Setup.exe</code>.</p></div></li>
+      <li><div><b>Setup starten</b><p>Doppelklick auf die Datei. Zeigt Windows „Der Computer wurde geschützt“, klick auf „Weitere Informationen“ und dann „Trotzdem ausführen“. Das Programm ist nicht signiert. Administratorrechte sind nicht nötig.</p></div></li>
+      <li><div><b>Installieren klicken</b><p>Wähle, ob du eine Desktop-Verknüpfung möchtest und ob der Player mit Windows starten soll. Node.js ist schon enthalten.</p></div></li>
+      <li><div><b>Konto erstellen</b><p>Der Player öffnet sich in seinem eigenen Fenster. Unter „Registrieren“ legst du dein Konto an. Danach findest du ihn im Startmenü und unten rechts neben der Uhr.</p></div></li>
+      <li><div><b>Auf den Fernseher senden</b><p>Beim laufenden Sender auf „📺 Auf TV“ klicken und Chromecast oder deinen Fernseher wählen. Beim ersten Mal schaltest du dort den WLAN-Zugriff ein und erlaubst ihn in der Windows-Firewall.</p></div></li>
     </ol>
   </section>
 
@@ -194,18 +196,19 @@ footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px s
         <h3>Voraussetzungen</h3>
         <dl>
           <dt>System</dt><dd>Windows 10 oder 11</dd>
-          <dt>Laufzeit</dt><dd>Node.js 18 oder neuer</dd>
-          <dt>Browser</dt><dd>Chrome, Edge oder Firefox</dd>
+          <dt>Speicher</dt><dd>ca. 100 MB</dd>
+          <dt>Browser</dt><dd>Edge oder Chrome (Edge ist bei Windows dabei)</dd>
+          <dt>Fernseher</dt><dd>Chromecast, Google TV oder DLNA-Smart-TV im selben WLAN</dd>
           <dt>Internet</dt><dd>ab 5 Mbit/s für HD</dd>
         </dl>
       </div>
       <div>
         <h3>Datei</h3>
         <dl>
-          <dt>Name</dt><dd>IPTV-Player.zip</dd>
-          <dt>Grösse</dt><dd>96.636 Bytes</dd>
-          <dt>Stand</dt><dd>16.10.2026</dd>
-          <dt>SHA-256</dt><dd><div class="hash"><code id="sha">7d8db5150976cc9d9c62e26d611fe959dedb4f02d5f5a74deca671658a2983a2</code><button class="copy" id="copyBtn" type="button">Kopieren</button></div></dd>
+          <dt>Name</dt><dd>IPTV-Player-Setup.exe</dd>
+          <dt>Grösse</dt><dd>34.789.888 Bytes</dd>
+          <dt>Stand</dt><dd>17.10.2026</dd>
+          <dt>SHA-256</dt><dd><div class="hash"><code id="sha">30a7c0488df5409368afbe73f25951e3e21b2634ad1d5d0a6ff2ab3bce993dae</code><button class="copy" id="copyBtn" type="button">Kopieren</button></div></dd>
         </dl>
       </div>
     </div>
@@ -233,11 +236,12 @@ footer{padding-block:34px 50px;color:var(--mute);font-size:13px;border-top:1px s
 const GITHUB_USER = 'OpenWars2011';
 const GITHUB_REPO = 'iptv-player';
 // ▲ Der Link zeigt immer auf die ZIP-Datei im neuesten Release
-const releaseZip = 'https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO + '/releases/latest/download/IPTV-Player.zip';
-document.getElementById('dlBtn').href = releaseZip;
+const rel = 'https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO + '/releases/latest/download/';
+document.getElementById('dlBtn').href = rel + 'IPTV-Player-Setup.exe';
+document.getElementById('zipLink').href = rel + 'IPTV-Player.zip';
 document.getElementById('dlBtn').addEventListener('click', () => {
   const m = document.getElementById('dlMsg');
-  m.textContent = 'Der Download startet. Weiter geht es mit Schritt 1 der Installation.'; m.className = 'msg ok';
+  m.textContent = 'Der Download startet. Danach die Datei öffnen und „Installieren“ klicken.'; m.className = 'msg ok';
 });
 
 document.getElementById('copyBtn').addEventListener('click', e => {
